@@ -37,22 +37,27 @@ impl Tree {
     }
 
     pub fn common_ancestors(&self, id1: u32, id2: u32) -> Vec<u32> {
-        let node1 = self.nodes.get(&id1).unwrap();
-        let node2 = self.nodes.get(&id2).unwrap();
+        let node1 = self.nodes.get(&id1);
+        let node2 = self.nodes.get(&id2);
 
-        dbg!(&node1.get_ancestors());
-        dbg!(&node2.get_ancestors());
+        match (node1, node2) {
+            (Some(node1), Some(node2)) => {
+                dbg!(&node1.get_ancestors());
+                dbg!(&node2.get_ancestors());
 
-        let output = node1
-            .get_ancestors()
-            .iter()
-            .filter(|a| node2.get_ancestors().contains(a))
-            .copied()
-            .collect();
+                let output = node1
+                    .get_ancestors()
+                    .iter()
+                    .filter(|a| node2.get_ancestors().contains(a))
+                    .copied()
+                    .collect();
 
-        dbg!(&output);
+                dbg!(&output);
 
-        output
+                output
+            }
+            _ => vec![],
+        }
     }
 }
 
@@ -74,5 +79,12 @@ mod tests {
         assert_eq!(tree.common_ancestors(4, 5), vec![1, 2]);
         assert_eq!(tree.common_ancestors(4, 6), vec![1]);
         assert_eq!(tree.common_ancestors(1, 6), vec![]);
+    }
+
+    #[test]
+    fn test_non_existent_node() {
+        let mut tree = Tree::new();
+        tree.add_node(1, None);
+        assert_eq!(tree.common_ancestors(1, 2), vec![]);
     }
 }

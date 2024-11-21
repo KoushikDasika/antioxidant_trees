@@ -4,6 +4,7 @@ pub struct Node {
     pub parent_id: Option<u32>,
     pub path: String,
     pub ancestors: Vec<u32>,
+    pub height: u32,
 }
 
 impl Node {
@@ -13,11 +14,8 @@ impl Node {
             parent_id,
             path,
             ancestors,
+            height: 0,
         }
-    }
-
-    pub fn get_parent_id(&self) -> Option<u32> {
-        self.parent_id
     }
 
     pub fn get_path(&self) -> String {
