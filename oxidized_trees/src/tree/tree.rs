@@ -36,7 +36,11 @@ impl Tree {
         self.count += 1;
     }
 
-    pub fn common_ancestors(&self, id1: u32, id2: u32) -> (Vec<u32>, Option<u32>, Option<u32>, Option<u32>) {
+    pub fn common_ancestors(
+        &self,
+        id1: u32,
+        id2: u32,
+    ) -> (Vec<u32>, Option<u32>, Option<u32>, Option<u32>) {
         let node1 = self.nodes.get(&id1);
         let node2 = self.nodes.get(&id2);
 
@@ -75,9 +79,15 @@ mod tests {
         tree.add_node(5, Some(2));
         tree.add_node(6, Some(3));
 
-        assert_eq!(tree.common_ancestors(4, 5), (vec![1, 2], Some(2), Some(1), Some(2)));
-        assert_eq!(tree.common_ancestors(4, 6), (vec![1], Some(1), Some(1), Some(2)));
-        assert_eq!(tree.common_ancestors(1, 6), (vec![], None, Some(0), Some(2)));
+        assert_eq!(
+            tree.common_ancestors(4, 5),
+            (vec![1, 2], Some(2), Some(1), Some(2))
+        );
+        assert_eq!(
+            tree.common_ancestors(4, 6),
+            (vec![1], Some(1), Some(1), Some(1))
+        );
+        assert_eq!(tree.common_ancestors(1, 6), (vec![], None, None, Some(0)));
         assert_eq!(tree.common_ancestors(1, 99), (vec![], None, None, None));
     }
 
@@ -85,6 +95,6 @@ mod tests {
     fn test_non_existent_node() {
         let mut tree = Tree::new();
         tree.add_node(1, None);
-        assert_eq!(tree.common_ancestors(1, 2), (vec![], None, None));
+        assert_eq!(tree.common_ancestors(1, 2), (vec![], None, None, None));
     }
 }

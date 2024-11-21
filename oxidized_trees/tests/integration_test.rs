@@ -29,7 +29,16 @@ fn test_common_ancestors() {
     tree.add_node(6, Some(3));
     tree.add_node(7, Some(3));
 
-    assert_eq!(tree.common_ancestors(2, 3), (vec![1], Some(1), Some(1), Some(2)));
-    assert_eq!(tree.common_ancestors(4, 5), (vec![1, 2], Some(2), Some(1), Some(2)));
-    assert_eq!(tree.common_ancestors(4, 7), (vec![1], Some(1), Some(1), Some(2)));
+    assert_eq!(
+        tree.common_ancestors(2, 3),
+        (vec![1], Some(1), Some(1), Some(1))
+    );
+    assert_eq!(
+        tree.common_ancestors(4, 5),
+        (vec![1, 2], Some(2), Some(1), Some(2))
+    );
+    assert_eq!(
+        tree.common_ancestors(4, 7),
+        (vec![1], Some(1), Some(1), Some(1))
+    );
 }
