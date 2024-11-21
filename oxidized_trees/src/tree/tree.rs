@@ -4,24 +4,27 @@ use std::collections::HashMap;
 #[derive(Debug)]
 pub struct Tree {
     pub nodes: HashMap<u32, Node>,
-    pub count: u32
+    pub count: u32,
 }
 
 impl Tree {
     pub fn new() -> Self {
-        Tree { nodes: HashMap::new(), count: 0 }
+        Tree {
+            nodes: HashMap::new(),
+            count: 0,
+        }
     }
-    
+
     pub fn add_node(&mut self, id: u32, parent_id: Option<u32>) {
-        let parent = self.nodes.get(&parent_id.unwrap_or_default());
-        match parent {
-            Some(_parent) => {
-                let new_node = Node::new(id, parent_id);
-                self.nodes.insert(self.count, new_node);
+        let has_parent = self.nodes.contains_key(&parent_id.unwrap_or_default());
+        match has_parent {
+            true => {
+                let new_node = Node::new(id, Some(parent_id.unwrap()));
+                self.nodes.insert(id, new_node);
             }
-            None => {
+            false => {
                 let new_node = Node::new(id, None);
-                self.nodes.insert(self.count, new_node);
+                self.nodes.insert(id, new_node);
             }
         };
 
