@@ -74,14 +74,16 @@ impl Tree {
     }
 
     pub fn get_descendants(&self, id: u32) -> HashSet<u32> {
-        let node = self.nodes.get(&id).unwrap();
-        let children = node.children.clone();
-
         let mut descendants = HashSet::new();
+        let mut stack = vec![id];
 
-        for child in children.iter() {
-            descendants.insert(*child);
-            descendants.extend(self.get_descendants(*child));
+        while let Some(current_id) = stack.pop() {
+            if let Some(node) = self.nodes.get(&current_id) {
+                for &child_id in &node.children {
+                    descendants.insert(child_id);
+                    stack.push(child_id);
+                }
+            }
         }
 
         descendants

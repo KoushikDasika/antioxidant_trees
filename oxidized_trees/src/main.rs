@@ -6,7 +6,6 @@ pub mod generate;
 pub mod tree;
 
 use generate::generate_random_nodes;
-use rocket::serde::json::Json;
 use rocket::State;
 use rocket_dyn_templates::Template;
 pub use tree::Node;
@@ -18,7 +17,7 @@ fn index() -> &'static str {
 }
 
 #[get("/descendants/<id>")]
-fn descendants(tree: &State<Tree>, id: u32) -> Json<Vec<u32>> {
+fn descendants(tree: &State<Tree>, id: u32) -> Template {
     let mut descendants = tree
         .get_descendants(id)
         .iter()
@@ -26,7 +25,13 @@ fn descendants(tree: &State<Tree>, id: u32) -> Json<Vec<u32>> {
         .collect::<Vec<u32>>();
 
     descendants.sort();
-    Json(descendants)
+
+    let context = rocket_dyn_templates::serde::json::json!({
+        "id": id,
+        "descendants": descendants
+    });
+
+    Template::render("descendants", &context)
 }
 
 #[get("/nodes/<id1>/common_ancestors/<id2>")]
@@ -46,7 +51,7 @@ fn common_ancestors(tree: &State<Tree>, id1: u32, id2: u32) -> Template {
 #[rocket::main]
 async fn main() -> Result<(), rocket::Error> {
     let mut tree = Tree::new();
-    generate_random_nodes(&mut tree, 100, 10);
+    generate_random_nodes(&mut tree, 100_000, 10);
 
     let _rocket = rocket::build()
         .mount("/", routes![index, descendants, common_ancestors])

@@ -18,5 +18,4 @@ pub fn generate_random_nodes(tree: &mut Tree, number_of_nodes: u32, batch_size: 
     }
 
     println!("Finished");
-    println!("{:?}", tree.nodes);
 }
