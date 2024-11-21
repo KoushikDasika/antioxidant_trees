@@ -20,6 +20,10 @@ impl Tree {
         self.nodes.get(&id)
     }
 
+    pub fn number_of_nodes(&self) -> u32 {
+        self.count
+    }
+
     pub fn add_node(&mut self, id: u32, parent_id: Option<u32>) {
         let has_parent = self.nodes.contains_key(&parent_id.unwrap_or_default());
         match has_parent {

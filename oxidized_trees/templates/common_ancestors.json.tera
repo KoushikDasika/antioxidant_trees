@@ -1,0 +1,6 @@
+{
+    "common_ancestors": {{ common_ancestors }},
+    "common_ancestor": {{ common_ancestor  }},
+    "root_node": {{ root_node  }},
+    "height": {{ height  }}
+}

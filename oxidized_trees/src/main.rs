@@ -2,9 +2,13 @@
 extern crate rocket;
 extern crate rocket_dyn_templates;
 
+pub mod generate;
 pub mod tree;
+
+use generate::generate_random_nodes;
+use rocket::serde::json::Json;
 use rocket::State;
-use rocket_dyn_templates::{context, Template};
+use rocket_dyn_templates::Template;
 pub use tree::Node;
 pub use tree::Tree;
 
@@ -14,40 +18,42 @@ fn index() -> &'static str {
 }
 
 #[get("/descendants/<id>")]
-fn descendants(tree: &State<Tree>, id: u32) -> Template {
-    let descendants = tree
+fn descendants(tree: &State<Tree>, id: u32) -> Json<Vec<u32>> {
+    let mut descendants = tree
         .get_descendants(id)
         .iter()
-        .map(|n| n.to_string())
-        .collect::<Vec<String>>();
-    Template::render(
-        "descendants",
-        context! {
-            title: "Descendants",
-            descendants: descendants
-        },
-    )
+        .map(|n| *n)
+        .collect::<Vec<u32>>();
+
+    descendants.sort();
+    Json(descendants)
+}
+
+#[get("/nodes/<id1>/common_ancestors/<id2>")]
+fn common_ancestors(tree: &State<Tree>, id1: u32, id2: u32) -> Template {
+    let (common_ancestors, common_ancestor, root_node, height) = tree.common_ancestors(id1, id2);
+
+    let context = rocket_dyn_templates::serde::json::json!({
+        "common_ancestors": common_ancestors,
+        "common_ancestor": common_ancestor,
+        "root_node": root_node,
+        "height": height
+    });
+
+    Template::render("common_ancestors", &context)
 }
 
 #[rocket::main]
 async fn main() -> Result<(), rocket::Error> {
-    let tree = setup();
+    let mut tree = Tree::new();
+    generate_random_nodes(&mut tree, 100, 10);
+
     let _rocket = rocket::build()
-        .mount("/", routes![index, descendants])
+        .mount("/", routes![index, descendants, common_ancestors])
         .manage(tree)
         .attach(rocket_dyn_templates::Template::fairing())
         .launch()
         .await?;
 
     Ok(())
-}
-
-fn setup() -> Tree {
-    let mut tree = Tree::new();
-    tree.add_node(1, None);
-    tree.add_node(2, Some(1));
-    tree.add_node(3, Some(1));
-    tree.add_node(4, Some(2));
-    tree.add_node(5, Some(2));
-    tree
 }
