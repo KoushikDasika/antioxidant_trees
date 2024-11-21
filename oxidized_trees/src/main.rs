@@ -1,14 +1,28 @@
+#[macro_use]
+extern crate rocket;
+
 pub mod tree;
 pub use tree::Node;
 pub use tree::Tree;
 
-fn main() {
+#[get("/")]
+fn index() -> &'static str {
+    "Hello, world!"
+}
+
+#[rocket::main]
+async fn main() -> Result<(), rocket::Error> {
     let tree = setup();
     dbg!(&tree);
-
     // dbg!(tree.common_ancestors(4, 5));
     // dbg!(tree.common_ancestors(4, 7));
-    dbg!(tree.get_descendants(1));
+
+    let _rocket = rocket::build()
+        .mount("/hello", routes![index])
+        .launch()
+        .await?;
+
+    Ok(())
 }
 
 fn setup() -> Tree {
