@@ -4,4 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-rocket = { git = "https://github.com/rwf2/Rocket", rev = "3bf9ef02d6e803fe9f753777f5a829dda6d2453d" }
+rocket = { version = "0.5.1", features = ["json"] }
+rocket_dyn_templates = { version = "0.2.0", features = ["tera"] }

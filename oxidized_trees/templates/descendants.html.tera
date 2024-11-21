@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Tera Demo - {{ title }}</title>
+  </head>
+  <body>
+    <ul>
+      {% for descendant in descendants %}
+        <li>{{ descendant }}</li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>
