@@ -1,5 +1,6 @@
 use crate::tree::Node;
 use std::collections::HashMap;
+use std::collections::HashSet;
 
 #[derive(Debug)]
 pub struct Tree {
@@ -21,14 +22,14 @@ impl Tree {
             true => {
                 let parent_node = self.nodes.get(&parent_id.unwrap()).unwrap();
                 let new_path = format!("{}.{}", parent_node.path, id);
-                let mut ancestors = parent_node.ancestors.clone();
-                ancestors.push(parent_node.id);
+                let mut ancestors = parent_node.get_ancestors();
+                ancestors.insert(parent_node.id);
 
                 let new_node = Node::new(id, Some(parent_id.unwrap()), new_path, ancestors);
                 self.nodes.insert(id, new_node);
             }
             false => {
-                let new_node = Node::new(id, None, String::from(id.to_string()), Vec::new());
+                let new_node = Node::new(id, None, String::from(id.to_string()), HashSet::new());
                 self.nodes.insert(id, new_node);
             }
         };
@@ -40,26 +41,27 @@ impl Tree {
         &self,
         id1: u32,
         id2: u32,
-    ) -> (Vec<u32>, Option<u32>, Option<u32>, Option<u32>) {
+    ) -> (HashSet<u32>, Option<u32>, Option<u32>, Option<u32>) {
         let node1 = self.nodes.get(&id1);
         let node2 = self.nodes.get(&id2);
 
         match (node1, node2) {
             (Some(node1), Some(node2)) => {
-                let ancestor_list: Vec<u32> = node1
-                    .get_ancestors()
-                    .iter()
-                    .filter(|a| node2.get_ancestors().contains(a))
-                    .copied()
-                    .collect();
+                let ancestors1 = node1.get_ancestors();
+                let ancestors2 = node2.get_ancestors();
 
-                let common_ancestor = ancestor_list.last().copied();
-                let root_node = ancestor_list.first().copied();
+                let ancestor_list: HashSet<u32> =
+                    ancestors1.intersection(&ancestors2).cloned().collect();
+
+                let common_ancestor = ancestor_list.iter().max().copied();
+                dbg!(&common_ancestor);
+
+                let root_node = ancestor_list.iter().min().copied();
                 let height = Some(ancestor_list.len() as u32);
 
                 (ancestor_list, common_ancestor, root_node, height)
             }
-            _ => (vec![], None, None, None),
+            _ => (HashSet::new(), None, None, None),
         }
     }
 }
@@ -81,20 +83,29 @@ mod tests {
 
         assert_eq!(
             tree.common_ancestors(4, 5),
-            (vec![1, 2], Some(2), Some(1), Some(2))
+            (HashSet::from([1, 2]), Some(2), Some(1), Some(2))
         );
         assert_eq!(
             tree.common_ancestors(4, 6),
-            (vec![1], Some(1), Some(1), Some(1))
+            (HashSet::from([1]), Some(1), Some(1), Some(1))
         );
-        assert_eq!(tree.common_ancestors(1, 6), (vec![], None, None, Some(0)));
-        assert_eq!(tree.common_ancestors(1, 99), (vec![], None, None, None));
+        assert_eq!(
+            tree.common_ancestors(1, 6),
+            (HashSet::new(), None, None, Some(0))
+        );
+        assert_eq!(
+            tree.common_ancestors(1, 99),
+            (HashSet::new(), None, None, None)
+        );
     }
 
     #[test]
     fn test_non_existent_node() {
         let mut tree = Tree::new();
         tree.add_node(1, None);
-        assert_eq!(tree.common_ancestors(1, 2), (vec![], None, None, None));
+        assert_eq!(
+            tree.common_ancestors(1, 2),
+            (HashSet::new(), None, None, None)
+        );
     }
 }

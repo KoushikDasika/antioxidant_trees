@@ -1,5 +1,6 @@
 extern crate oxidized_trees;
 use oxidized_trees::Tree;
+use std::collections::HashSet;
 
 #[test]
 fn test_tree() {
@@ -31,14 +32,14 @@ fn test_common_ancestors() {
 
     assert_eq!(
         tree.common_ancestors(2, 3),
-        (vec![1], Some(1), Some(1), Some(1))
+        (HashSet::from([1]), Some(1), Some(1), Some(1))
     );
     assert_eq!(
         tree.common_ancestors(4, 5),
-        (vec![1, 2], Some(2), Some(1), Some(2))
+        (HashSet::from([1, 2]), Some(2), Some(1), Some(2))
     );
     assert_eq!(
         tree.common_ancestors(4, 7),
-        (vec![1], Some(1), Some(1), Some(1))
+        (HashSet::from([1]), Some(1), Some(1), Some(1))
     );
 }
