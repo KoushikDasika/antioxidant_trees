@@ -3,6 +3,15 @@ pub use tree::Node;
 pub use tree::Tree;
 
 fn main() {
+    let tree = setup();
+    dbg!(&tree);
+
+    // dbg!(tree.common_ancestors(4, 5));
+    // dbg!(tree.common_ancestors(4, 7));
+    dbg!(tree.get_descendants(1));
+}
+
+fn setup() -> Tree {
     let mut tree = Tree::new();
 
     tree.add_node(1, None);
@@ -13,8 +22,5 @@ fn main() {
     tree.add_node(6, Some(3));
     tree.add_node(7, Some(3));
 
-    dbg!(&tree);
-
-    dbg!(tree.common_ancestors(4, 5));
-    dbg!(tree.common_ancestors(4, 7));
+    tree
 }

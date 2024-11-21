@@ -42,4 +42,7 @@ fn test_common_ancestors() {
         tree.common_ancestors(4, 7),
         (HashSet::from([1]), Some(1), Some(1), Some(1))
     );
+    assert_eq!(tree.get_descendants(1), HashSet::from([2, 3, 4, 5, 6, 7]));
+    assert_eq!(tree.get_descendants(2), HashSet::from([4, 5]));
+    assert_eq!(tree.get_descendants(3), HashSet::from([6, 7]));
 }

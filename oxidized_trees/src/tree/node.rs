@@ -6,6 +6,7 @@ pub struct Node {
     pub parent_id: Option<u32>,
     pub path: String,
     pub ancestors: HashSet<u32>,
+    pub children: HashSet<u32>,
     pub height: u32,
 }
 
@@ -16,6 +17,7 @@ impl Node {
             parent_id,
             path,
             ancestors,
+            children: HashSet::new(),
             height: 0,
         }
     }
