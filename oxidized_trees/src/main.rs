@@ -9,5 +9,4 @@ fn main() {
     tree.add_node(2, Some(1));
 
     dbg!(&tree);
-    // dbg!(&tree.nodes);
 }

@@ -19,11 +19,13 @@ impl Tree {
         let has_parent = self.nodes.contains_key(&parent_id.unwrap_or_default());
         match has_parent {
             true => {
-                let new_node = Node::new(id, Some(parent_id.unwrap()));
+                let parent_node = self.nodes.get(&parent_id.unwrap()).unwrap();
+                let new_path = format!("{}.{}", parent_node.path, id);
+                let new_node = Node::new(id, Some(parent_id.unwrap()), new_path);
                 self.nodes.insert(id, new_node);
             }
             false => {
-                let new_node = Node::new(id, None);
+                let new_node = Node::new(id, None, String::from(id.to_string()));
                 self.nodes.insert(id, new_node);
             }
         };
